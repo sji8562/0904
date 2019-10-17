@@ -32,12 +32,11 @@ var canvas = document.querySelector('canvas'),
     velocityCutoff = 0.01,
     bounceLoss = .85,
     cue,
-    tableFriction = 0.00003;
+    tableFriction = 0.00003 ;
 canvas.width = w;
 canvas.height = h;
 var power = 0;
-xlocations = [180, 20, 200, 240],
-    ylocations = [400, 275, 200, 240];
+xlocations = [670, 133, 266, 670], ylocations = [420, 270, 270, 270];
 nowPlayer = 0;
 shootend = false;
 var scoreinfo = [0, 0];
@@ -167,7 +166,6 @@ var Table = function () {
     this.height = 550;
 }
 
-
 Table.prototype.draw = function () {
     var tw = this.width + 120;
     var th = this.height + 120;
@@ -251,7 +249,7 @@ var Ball = function (i) {
     this.tableFriction = tableFriction;
     this.c = colors[i % points];
     this.index = i;
-    // this.move = false;
+    this.move = false;
     this.red1 = false;
     this.red2 = false;
     this.loss = false;
@@ -283,36 +281,41 @@ Ball.prototype.Update = function (table) {
     this.y += this.yVelocity * dT;
     this.x += this.xVelocity * dT;
 
+    // console.log("X 가속도: " + this.xAccel);
+    // console.log("y 가속도: " + this.yAccel);
+    // console.log("x 속도: " + this.xVelocity);
+    // console.log("y 속도: " + this.yVelocity);
+
     var bounce = false;
-    if (this.y >= table.height - this.r) // Ball at bottom edge
+    if (this.y >= table.height - this.r) // 아래쪽 쿠션
     {
         this.y = table.height - this.r;
         this.yVelocity = -this.yVelocity;
-        this.yAccel = -this.yAccel;
+        this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
     }
-    else if (this.y <= this.r) // Ball at top edge
+    else if (this.y <= this.r) // 위쪽쿠션
     {
         this.y = this.r;
         this.yVelocity = -this.yVelocity;
-        this.yAccel = -this.yAccel;
+        this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
     }
 
-    if (this.x >= table.width - this.r) //  오른쪽 끝에 있는 공
+    if (this.x >= table.width - this.r) //  오른쪽 쿠션
     {
-        // 겹치지 않도록
+
         this.x = table.width - this.r;
         // "Bounce" it
         this.xVelocity = -this.xVelocity;
-        this.xAccel = -this.xAccel;
+        this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
     }
-    else if (this.x <= this.r) // 왼쪽 끝에 있는 공
+    else if (this.x <= this.r) // 왼쪽쿠션
     {
         this.x = this.r;
         this.xVelocity = -this.xVelocity;
-        this.xAccel = -this.xAccel;
+        this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
     }
 
@@ -353,7 +356,7 @@ function CollideBalls(ball, ball2) {
             balls[nowPlayer].red2 = true;
     }
 
-    var Del = ball2.r + ball.r;
+    var Del = ball2.r + ball.r;elasticity
     var dX = ball2.x - ball.x;
     var dY = ball2.y - ball.y;
     var dVX = ball2.xVelocity - ball.xVelocity;

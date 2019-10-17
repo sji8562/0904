@@ -61,7 +61,7 @@ function stopDrag() {
 }
 
 function frame() {
-    one = one + 0.007;
+    one = one + 0.01;
     gauge += one;
     if (gauge >= 100.0) {
         one = -one;
@@ -104,11 +104,11 @@ function cue_motion() {
         draw_cue();
         sound_hit.play();
         i = 0;
-        // setTimeout(function () {
+         setTimeout(function () {
         cue.visible = false;
         HitBall();
         draw();
-        // }, 500);
+         }, 500);
 
     }
 
@@ -251,7 +251,7 @@ function keyEvent1(e) {
             playerChange();
         }
 
-        else if (e.keyCode === 32 && waite) { //w버튼
+        else if (e.keyCode === 32 && waite) { //스페이스버튼
             startGauge();
             waite = false;
         }
@@ -260,7 +260,7 @@ function keyEvent1(e) {
 }
 
 function keyEvent2(e) {
-    if (e.keyCode === 32 && waite) { //w버튼
+    if (e.keyCode === 32 && waite) { //스페이스버튼
         stopGauge();
         waite = false;
         waitkey = true;
@@ -274,7 +274,7 @@ function getscore() {
     {
         if (balls[nowPlayer].red1 && balls[nowPlayer].red2) {
             scoreinfo[nowPlayer]++; //득점
-            text = "Nice Shoot!";
+            text = "Nice!";
         }
 
         else if (balls[nowPlayer].red1 || balls[nowPlayer].red2) {
@@ -356,7 +356,8 @@ function help_alert() {
         "2. 위,아래 버튼 (↑, ↓) : 작은 각도 조절\n" +
         "3. 스페이스바 : 공을친다 버튼을 눌렀을때와 같음\n" +
         "4. C버튼 : 선수교체 버튼을 눌렀을때와 같음\n"+
-        "5. W버튼 : 공이 빨리 움직여 시간을 단축한다",
+        "5. W버튼 : 공이 빨리 움직여 시간을 단축한다\n\n"+
+        "by Sji8562",
 
         "info"
     );
