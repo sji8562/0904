@@ -1,7 +1,7 @@
 var sound_hit = new Audio('../sounds/hit.mp3');
 var sound_collision = new Audio('../sounds/collision.mp3');
 var gauge = 0;
-var one = 0.1;
+var one = 0.01;
 var id;
 var power = 0;
 var tempX;
@@ -59,22 +59,22 @@ function stopDrag() {
         cue.drag = false;
     }
 }
-
+//게이지 충전
 function frame() {
     one = one + 0.01;
-    gauge += one;
-    if (gauge >= 100.0) {
-        one = -one;
+    gauge += one; //one값을 게이지에 계속 더한다
+    if (gauge >= 100.0) { //게이지가 100까지 올라가면
+        one = -one; //게이지가 내려가도록
     }
 
-    if (gauge <= 0) {
-        one = 0.1;
+    if (gauge <= 0) { //게이지가 0이되면
+        one = 0.01;//다시 게이지에 one값을 더해준다
         one = Math.abs(one);
     }
     elem.style.width = gauge + '%';
-    document.getElementById("label").innerHTML = gauge.toFixed(1) + '%';
+    document.getElementById("label").innerHTML = gauge.toFixed(1) + '%';  //게이지 값을 받아서 출력
 }
-//게이지 채우기
+//게이지 충전속도
 function startGauge() {
     id = setInterval(frame, 10);
     waitkey = false;
@@ -328,7 +328,7 @@ function getscore() {
     ctx.clearRect(0, 0, w, h);
     //다시 불러옴
     table.draw();
-    //공을 쳤을때 좋다, 더 잘하자 , 좋지않다 폰트
+    //공을 쳤을때 좋다, 더 잘하자 , 좋지않다 출력과 폰트
     setTimeout(function () {
         ctx.font = 'italic 100px calibri';
         ctx.fillText(text, 250, 250);

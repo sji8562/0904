@@ -8,17 +8,17 @@ var mouseX = 0, mouseY = 0;
 var nowdegree = 0;
 var cursor_grab = "url(DATA URI), move";
 var cursor_drag = "url(DATA URI), move";
-var degreeToRadian = Math.PI / 180;
+var degreeToRadian = Math.PI / 180; //각도 계산
 //html dom 트리에 캔버스 요소 추가
 var canvas = document.querySelector('canvas'),
     //캔버스에 2d로 그릴 수 있도록 준비
     ctx = canvas.getContext('2d'),
     w = window.innerWidth,
     h = window.innerHeight,
-    points = 4,
-    colors = ['#feca28', '#f8f6ea', '#e51515', '#e51515'],
+    points = 4,  //공의 위치
+    colors = ['#feca28', '#f8f6ea', '#e51515', '#e51515'], //공 색깔을 넣어줌, 노 흰 빨 빨
     balls = [],
-    table,
+    table, //당구대
     mouse = {
         down: false,
         button: 1,
@@ -32,7 +32,7 @@ var canvas = document.querySelector('canvas'),
     velocityCutoff = 0.01,
     bounceLoss = .85,
     cue,
-    tableFriction = 0.00003 ;
+    tableFriction = 0.00003 ; //테이블 마찰력
 canvas.width = w;
 canvas.height = h;
 var power = 0;
@@ -69,6 +69,7 @@ window.onload = function () {
     draw();
 };
 //큐대
+//공의 위치를 받아서 그 자리에서 60을 더한자리에 위치한다 그리고 마우스와 드래그는 입력받지 않는 상태이다
 var Cue = function (ball) {
     this.x = ball.x + 60;
     this.y = ball.y + 60;
@@ -158,51 +159,55 @@ function draw_cue() {
     }
 }
 
-
+//테이블 펑션
 var Table = function () {
     this.xPos = 60;
     this.yPos = 60;
     this.width = 1080;
     this.height = 550;
 }
-
+//테이블 그리는 펑션
 Table.prototype.draw = function () {
     var tw = this.width + 120;
     var th = this.height + 120;
 
+    // 테이블 테두리 그리기
     ctx.setLineDash([]);
     ctx.fillStyle = "#6a5746";
     ctx.fillRect(0, 0, tw, th);
+    //쿠션 그리기
     ctx.fillStyle = "#3456af";
     ctx.fillRect(45, 45, tw - 90, th - 90);
-    ctx.fillStyle = "#4370d7";
+    //쿠션그리기
+    ctx.fillStyle = "#4370d7"
     ctx.fillRect(60, 60, tw - 120, th - 120);
 
-    ctx.beginPath();
+    //큐대 치는 모션
+    ctx.beginPath();//경로설정
     ctx.moveTo(0, 0);
     ctx.lineTo(60, 60);
     ctx.stroke();
-    ctx.closePath();
-
+    ctx.closePath(); //하위경로 연결
+    //서서히 뒤로빠짐
     ctx.beginPath();
     ctx.moveTo(tw, 0);
     ctx.lineTo(tw - 60, 60);
     ctx.stroke();
     ctx.closePath();
-
+    //서서히 뒤로빠짐
     ctx.beginPath();
     ctx.moveTo(0, th);
     ctx.lineTo(60, th - 60);
     ctx.stroke();
     ctx.closePath();
-
+    //앞으로가면서 치게됨
     ctx.beginPath();
     ctx.moveTo(tw, th);
     ctx.lineTo(tw - 60, th - 60);
     ctx.stroke();
     ctx.closePath();
 
-    ctx.fillStyle = "#b0b0b0";
+    ctx.fillStyle = "#b0b0b0"; //쿠션 포인트
 
     for (var i = 1; i <= 7; i++) {
         ctx.beginPath();
@@ -237,26 +242,26 @@ Table.prototype.draw = function () {
 
 
 var Ball = function (i) {
-    this.r = 20;
-    this.x = xlocations[i % points];
-    this.y = ylocations[i % points];
-    this.opacity = 1;
-    this.xVelocity = 0;
-    this.yVelocity = 0;
-    this.xAccel = 0;
-    this.yAccel = 0;
-    this.bounceLoss = bounceLoss;
-    this.tableFriction = tableFriction;
-    this.c = colors[i % points];
+    this.r = 17; //공의 크기
+    this.x = xlocations[i % points]; //공의 x축
+    this.y = ylocations[i % points]; //공의 y축
+    this.opacity = 1; // 투명도
+    this.xVelocity = 0; //x속도
+    this.yVelocity = 0; //y속도
+    this.xAccel = 0; //x 가속도
+    this.yAccel = 0; //y  가속도
+    this.bounceLoss = bounceLoss; //충돌혔을때 감속
+    this.tableFriction = tableFriction; //테이블 마찰력
+    this.c = colors[i % points]; //공 위치에따른 색깔
     this.index = i;
-    this.move = false;
-    this.red1 = false;
-    this.red2 = false;
-    this.loss = false;
+    // this.move = false;
+    this.red1 = false; //1번 빨간공
+    this.red2 = false; //2번 빨간공
+    this.loss = false; //플레이어 볼
 }
 
 Ball.prototype.draw = function (table) {
-    ctx.fillStyle = this.c;
+    ctx.fillStyle = this.c; // 공에 색을 부여
     ctx.globalAlpha = this.opacity;
     ctx.beginPath();
     ctx.save();
@@ -273,11 +278,11 @@ Ball.prototype.draw = function (table) {
 };
 
 Ball.prototype.Update = function (table) {
-    var dT = 1000 / refreshHz;
-    this.xAccel = this.xVelocity * -this.tableFriction * dT;
-    this.yAccel = this.yVelocity * -this.tableFriction * dT;
-    this.yVelocity += this.yAccel * dT;
-    this.xVelocity += this.xAccel * dT;
+    var dT = 1000 / refreshHz; //화면 재생 빈도율
+    this.xAccel = this.xVelocity * -this.tableFriction * dT; //x축 속도 x -테이블마찰력 x 화면재생 빈도율
+    this.yAccel = this.yVelocity * -this.tableFriction * dT; //y축 속도 x -테이블마찰력 x 화면재생 빈도율
+    this.xVelocity += this.xAccel * dT; //x축 가속도를 x 속도에 계속 더해준다
+    this.yVelocity += this.yAccel * dT; //y축 가속도를 y 속도에 계속 더해준다
     this.y += this.yVelocity * dT;
     this.x += this.xVelocity * dT;
 
@@ -286,7 +291,7 @@ Ball.prototype.Update = function (table) {
     // console.log("x 속도: " + this.xVelocity);
     // console.log("y 속도: " + this.yVelocity);
 
-    var bounce = false;
+    var bounce = false; //쿠션에 부딪칠때 발생하는 함수
     if (this.y >= table.height - this.r) // 아래쪽 쿠션
     {
         this.y = table.height - this.r;
@@ -319,12 +324,12 @@ Ball.prototype.Update = function (table) {
         bounce = true;
     }
 
-    // Update velocity
+    // 감속
     if (bounce) {
         this.xVelocity *= this.bounceLoss;
         this.yVelocity *= this.bounceLoss;
     }
-
+    // 정지
     if (Math.abs(this.xVelocity) + Math.abs(this.yVelocity) < velocityCutoff) {
         this.yVelocity = 0;
         this.yAccel = 0;
@@ -346,7 +351,7 @@ function CollideBalls(ball, ball2) {
     sound_collision.play();
 
     lossball = (nowPlayer + 1) % 2;
-
+    //공을 치는 사람일경우 다른 공은 실점되는 공이되고 red1 , red2가활성화된다
     if (ball == balls[nowPlayer]) {
         if (ball2 == balls[lossball])
             balls[nowPlayer].loss = true;
@@ -356,7 +361,7 @@ function CollideBalls(ball, ball2) {
             balls[nowPlayer].red2 = true;
     }
 
-    var Del = ball2.r + ball.r;elasticity
+    var Del = ball2.r + ball.r;
     var dX = ball2.x - ball.x;
     var dY = ball2.y - ball.y;
     var dVX = ball2.xVelocity - ball.xVelocity;
@@ -369,7 +374,7 @@ function CollideBalls(ball, ball2) {
     ball.yVelocity += dY * alpha;
     ball2.xVelocity -= dX * alpha;
     ball2.yVelocity -= dY * alpha;
-    //충돌했을때 공이 맞은 각도로 꺽일수 있게 함
+    //충돌했을때 공이 붙지 않게 함
     var DDist = ((Del + 1) / Math.sqrt(dSq) - 1) / 2;
     ball.x -= dX * DDist;
     ball.y -= dY * DDist;
