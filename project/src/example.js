@@ -1,4 +1,13 @@
+var GAME_STATE_READY = 0, //준비
+    GAME_STATE_GAME = 1, //게임중
+    GAME_STATE_END =2; //게임 끝
 //html에  id들을 불러옴
+
+var GameState = GAME_STATE_READY; //초기값은 준비된 상태
+
+var redata1 =prompt("점수를 입력하시오",100);
+var redata2 =prompt("점수를 입력하시오", 100)
+
 var help = document.getElementById("help_btn");
 var hit = document.getElementById("hit_btn");
 var player = document.getElementById("player_change");
@@ -32,14 +41,15 @@ var canvas = document.querySelector('canvas'),
     velocityCutoff = 0.01,
     bounceLoss = .85,
     cue,
-    tableFriction = 0.00003 ; //테이블 마찰력
+    tableFriction = 0.00003 , //테이블 마찰력
+    count = 0;
 canvas.width = w;
 canvas.height = h;
 var power = 0;
 xlocations = [670, 133, 266, 670], ylocations = [420, 270, 270, 270];
 nowPlayer = 0;
 shootend = false;
-var scoreinfo = [0, 0];
+var scoreinfo = [redata1/10, redata2/10];
 
 //리페인트 이전에 실행할 콜백을 받습니다
 window.requestAnimFrame = (function () {
@@ -68,6 +78,8 @@ window.onload = function () {
 
     draw();
 };
+
+
 //큐대
 //공의 위치를 받아서 그 자리에서 60을 더한자리에 위치한다 그리고 마우스와 드래그는 입력받지 않는 상태이다
 var Cue = function (ball) {
@@ -258,6 +270,7 @@ var Ball = function (i) {
     this.red1 = false; //1번 빨간공
     this.red2 = false; //2번 빨간공
     this.loss = false; //플레이어 볼
+    this.count = 0; //쿠션 맞은 수
 }
 
 Ball.prototype.draw = function (table) {
@@ -290,6 +303,7 @@ Ball.prototype.Update = function (table) {
     // console.log("y 가속도: " + this.yAccel);
     // console.log("x 속도: " + this.xVelocity);
     // console.log("y 속도: " + this.yVelocity);
+    //console.log("쿠션 " + this.count);
 
     var bounce = false; //쿠션에 부딪칠때 발생하는 함수
     if (this.y >= table.height - this.r) // 아래쪽 쿠션
@@ -298,6 +312,7 @@ Ball.prototype.Update = function (table) {
         this.yVelocity = -this.yVelocity;
         this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
+        this.count++;
     }
     else if (this.y <= this.r) // 위쪽쿠션
     {
@@ -305,6 +320,7 @@ Ball.prototype.Update = function (table) {
         this.yVelocity = -this.yVelocity;
         this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
+        this.count++;
     }
 
     if (this.x >= table.width - this.r) //  오른쪽 쿠션
@@ -315,6 +331,7 @@ Ball.prototype.Update = function (table) {
         this.xVelocity = -this.xVelocity;
         this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
+        this.count++;
     }
     else if (this.x <= this.r) // 왼쪽쿠션
     {
@@ -322,6 +339,7 @@ Ball.prototype.Update = function (table) {
         this.xVelocity = -this.xVelocity;
         this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
+        this.count++;
     }
 
     // 감속
@@ -348,6 +366,7 @@ function CollideBalls(ball, ball2) {
     // 충돌 감지
 
     var lossball;
+
     sound_collision.play();
 
     lossball = (nowPlayer + 1) % 2;
@@ -359,6 +378,7 @@ function CollideBalls(ball, ball2) {
             balls[nowPlayer].red1 = true;
         if (ball2 == balls[3])
             balls[nowPlayer].red2 = true;
+
     }
 
     var Del = ball2.r + ball.r;

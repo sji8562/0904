@@ -1,5 +1,6 @@
 var sound_hit = new Audio('../sounds/hit.mp3');
 var sound_collision = new Audio('../sounds/collision.mp3');
+
 var gauge = 0;
 var one = 0.01;
 var id;
@@ -11,6 +12,7 @@ var i = 0;
 var isfirst = true;
 var guide_x;
 var guide_y;
+
 //마우스를 현재 좌표를 받기위한 오브젝트 좌표
 function findOffset(obj) {
     var curX = 0;
@@ -65,6 +67,7 @@ function frame() {
     gauge += one; //one값을 게이지에 계속 더한다
     if (gauge >= 100.0) { //게이지가 100까지 올라가면
         one = -one; //게이지가 내려가도록
+
     }
 
     if (gauge <= 0) { //게이지가 0이되면
@@ -89,6 +92,18 @@ function stopGauge() {
     hit.disabled = true;
     cue_execute();
     waitkey = true;
+    //소리 강약조절(power  = gauge 이므로 게이지 충전이 끝난 상태의 power의 값을 읽어 소리의 강약조절을 함
+    if (power < 20){
+        sound_hit.volume = 0.2;
+    }else if(power < 40){
+        sound_hit.volume = 0.4;
+    }else if(power < 60) {
+        sound_hit.volume = 0.6;
+    }else if(power < 80) {
+        sound_hit.volume = 0.8;
+    }else if(power < 100){
+        sound_hit.volume = 1;
+    }
 }
 
 function cue_motion() {
@@ -102,7 +117,7 @@ function cue_motion() {
         cue.x = tempX - 20 * Math.cos(degreeToRadian * cue.degree);
         cue.y = tempY - 20 * Math.sin(degreeToRadian * cue.degree);
         draw_cue();
-        sound_hit.play();
+        sound_hit.play()
         i = 0;
          setTimeout(function () {
         cue.visible = false;
@@ -272,9 +287,13 @@ function getscore() {
     var turnover = false;
     if (!balls[nowPlayer].loss) //적구를 맞지 않았을때
     {
-        if (balls[nowPlayer].red1 && balls[nowPlayer].red2) {
-            scoreinfo[nowPlayer]++; //득점
-            text = "Nice!";
+        if (balls[nowPlayer].red1 && balls[nowPlayer].red2&&balls[nowPlayer].count ==3) {
+            scoreinfo[nowPlayer]--; //득점
+            text = "cusion";
+
+        }else if(balls[nowPlayer].red1 && balls[nowPlayer].red2&&balls[nowPlayer].count <3){
+            scoreinfo[nowPlayer]--;
+            text = "Nice";
         }
 
         else if (balls[nowPlayer].red1 || balls[nowPlayer].red2) {
@@ -287,14 +306,14 @@ function getscore() {
         else {
             text = "Oh My God !!"; //실점
             if (scoreinfo[nowPlayer] > 0)
-                scoreinfo[nowPlayer]--;
+                scoreinfo[nowPlayer]++;
             turnover = true;
         }
     }
     else {
         text = "Oh My God !!"; //실점
         if (scoreinfo[nowPlayer] > 0)
-            scoreinfo[nowPlayer]--;
+            scoreinfo[nowPlayer]++;
         turnover = true;
     }   //오류나는 이유 나우공이 바뀌기전에 공이 맞은정보가 초기화 되야함
     //또한 메시지도 즉시 출력됨
@@ -302,6 +321,7 @@ function getscore() {
     balls[nowPlayer].red1 = false;  //공이 맞은 정보 초기화
     balls[nowPlayer].red2 = false;
     balls[nowPlayer].loss = false;
+    balls[nowPlayer].count = 0;
 
     if (turnover) {
         nowPlayer = ++nowPlayer % 2;// 차례변경
@@ -336,6 +356,7 @@ function getscore() {
 
 
 }
+
 //도움말 내용
 function help_alert() {
     swal(
