@@ -2,29 +2,27 @@
 <html lang="ko" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Billiard Game</title>
 </head>
 <body style="margin: 0; height: 100%; overflow: hidden">
+<!--화면에 표시되게 크기값을 줌-->
 <style>
 
-    #canvas{
+    #canvas {
         height: 30px;
     }
-
     #player_change {
         float: left;
         height: 30px;
         margin-right: 5px;
         margin-bottom: 10px;
     }
-
     #hit_btn {
         float: left;
         height: 30px;
         margin-left: 5px;
         margin-bottom: 10px;
     }
-
     #myProgress {
         float: left;
         position: relative;
@@ -33,7 +31,6 @@
         background-color: #ddd;
         margin-bottom: 10px;
     }
-
     #myBar {
         position: absolute;
         width: 0%;
@@ -41,14 +38,12 @@
         background-color: #4CAF50;
         margin-bottom: 10px;
     }
-
     #label {
         text-align: center;
         line-height: 30px;
         color: white;
         margin-bottom: 10px;
     }
-
     span {
         float: left;
         color: lightgrey;
@@ -57,29 +52,20 @@
         font-weight: bold;
         margin-left: 50px;
     }
-
     #help_btn {
         float: left;
         height: 30px;
         margin-left: 5px;
         margin-bottom: 10px;
     }
-
     #p2 {
         margin-right: 50px;
     }
-
     #help_btn {
         margin-right: 10px;
         width :40pt;
     }
-
 </style>
-<!--점수 입력 -->
-<script type="text/javascript">
-    document.write(redata1);
-    document.write(redata2);
-</script>
 <div id="container">
     <!--플레이어정보 구현-->
     <span id="p1" style="color:dodgerblue; margin-left: 0px;">Player1 : 0</span> <span style="color:red">vs</span> <span id="p2">Player2 : 0</span>

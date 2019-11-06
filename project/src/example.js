@@ -1,13 +1,5 @@
-var GAME_STATE_READY = 0, //준비
-    GAME_STATE_GAME = 1, //게임중
-    GAME_STATE_END =2; //게임 끝
 //html에  id들을 불러옴
-
-var GameState = GAME_STATE_READY; //초기값은 준비된 상태
-
-var redata1 =prompt("점수를 입력하시오",100);
-var redata2 =prompt("점수를 입력하시오", 100)
-
+var redata1, redata2;
 var help = document.getElementById("help_btn");
 var hit = document.getElementById("hit_btn");
 var player = document.getElementById("player_change");
@@ -27,8 +19,8 @@ var canvas = document.querySelector('canvas'),
     points = 4,  //공의 위치
     colors = ['#feca28', '#f8f6ea', '#e51515', '#e51515'], //공 색깔을 넣어줌, 노 흰 빨 빨
     balls = [],
-    table, //당구대
-    mouse = {
+    table, //당구다이
+    mouse = { //마우스를 사용하기위한
         down: false,
         button: 1,
         x: 0,
@@ -36,20 +28,20 @@ var canvas = document.querySelector('canvas'),
         px: 0,
         py: 0
     },
-    elasticity = .8,
-    refreshHz = 60,
-    velocityCutoff = 0.01,
-    bounceLoss = .85,
-    cue,
+    elasticity = .8, //탄력성
+    refreshHz = 60, //화면 재생 빈도율
+    velocityCutoff = 0.01, //속도 감소
+    bounceLoss = .85,//쿠션에 부딪혔을때 감속
+    cue,// 당구대
     tableFriction = 0.00003 , //테이블 마찰력
-    count = 0;
+    count = 0;//쿠션 부딪힘을 표현
 canvas.width = w;
 canvas.height = h;
 var power = 0;
-xlocations = [670, 133, 266, 670], ylocations = [420, 270, 270, 270];
-nowPlayer = 0;
+xlocations = [670, 133, 650, 670], ylocations = [420, 270, 250, 270];//공의 위치 노,흰,빨,빨
+nowPlayer = 0;//현재 플레이어
 shootend = false;
-var scoreinfo = [redata1/10, redata2/10];
+var scoreinfo;
 
 //리페인트 이전에 실행할 콜백을 받습니다
 window.requestAnimFrame = (function () {
@@ -61,8 +53,24 @@ window.requestAnimFrame = (function () {
             window.setTimeout(callback, 1000 / refreshHz);
         };
 })();
+
+
 //window가 로드 되면
 window.onload = function () {
+    redata1 = prompt("선공 플레이어의 평균 다마는?",100);
+    redata2 = prompt("후공 플레이어의 평균 다마는?", 100);
+
+    <!--점수 입력을 위한 alert 구현 -->
+    // document.write(redata1);
+    // document.write(redata2);
+    scoreinfo = [redata1/10, redata2/10];//점수표기 자신이 100을 친다고하면 10개 200을친다고하면 20
+    console.log(redata2)
+
+    p1 = document.getElementById("p1");
+    p2 = document.getElementById("p2");
+
+    p1.innerHTML = "Player1 : " + scoreinfo[0];
+    p2.innerHTML = "Player2 : " + scoreinfo[1];
 
     canvas.addEventListener('mousemove', updateCanvas, false);    //움직일때
     canvas.addEventListener('mousedown', startDrag, false); // 버튼을 누를때
@@ -75,6 +83,8 @@ window.onload = function () {
 
     document.addEventListener("keydown", keyEvent1); //
     document.addEventListener("keyup", keyEvent2);
+
+
 
     draw();
 };
@@ -90,7 +100,7 @@ var Cue = function (ball) {
     this.drag = false;
     this.visible = true;
 }
-
+//큐대 이미지를 그리고 위치를 잡는다
 function draw_cue() {
 
     if (cue.visible) {
@@ -303,7 +313,7 @@ Ball.prototype.Update = function (table) {
     // console.log("y 가속도: " + this.yAccel);
     // console.log("x 속도: " + this.xVelocity);
     // console.log("y 속도: " + this.yVelocity);
-    //console.log("쿠션 " + this.count);
+    // console.log("쿠션 " + this.count);
 
     var bounce = false; //쿠션에 부딪칠때 발생하는 함수
     if (this.y >= table.height - this.r) // 아래쪽 쿠션
@@ -312,7 +322,7 @@ Ball.prototype.Update = function (table) {
         this.yVelocity = -this.yVelocity;
         this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
-        this.count++;
+        this.count++;  //쿠션이 부딪힐때마다 카운트 +1 해서 3쿠션이상 맞으면 3쿠션 처리
     }
     else if (this.y <= this.r) // 위쪽쿠션
     {
@@ -320,7 +330,7 @@ Ball.prototype.Update = function (table) {
         this.yVelocity = -this.yVelocity;
         this.yAccel = -this.yAccel+0.0000000000000000000005;
         bounce = true;
-        this.count++;
+        this.count++; //쿠션이 부딪힐때마다 카운트 +1 해서 3쿠션이상 맞으면 3쿠션 처리
     }
 
     if (this.x >= table.width - this.r) //  오른쪽 쿠션
@@ -331,7 +341,7 @@ Ball.prototype.Update = function (table) {
         this.xVelocity = -this.xVelocity;
         this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
-        this.count++;
+        this.count++;//쿠션이 부딪힐때마다 카운트 +1 해서 3쿠션이상 맞으면 3쿠션 처리
     }
     else if (this.x <= this.r) // 왼쪽쿠션
     {
@@ -339,7 +349,7 @@ Ball.prototype.Update = function (table) {
         this.xVelocity = -this.xVelocity;
         this.xAccel = -this.xAccel+0.0000000000000000000005;
         bounce = true;
-        this.count++;
+        this.count++;//쿠션이 부딪힐때마다 카운트 +1 해서 3쿠션이상 맞으면 3쿠션 처리
     }
 
     // 감속
@@ -366,7 +376,6 @@ function CollideBalls(ball, ball2) {
     // 충돌 감지
 
     var lossball;
-
     sound_collision.play();
 
     lossball = (nowPlayer + 1) % 2;
@@ -436,6 +445,7 @@ function Dist(x1, y1, x2, y2) {
 
 (function init() {
 
+
         for (var i = 0; i < points; i++) {
             balls.push(new Ball(i));
         }
@@ -452,7 +462,7 @@ function Dist(x1, y1, x2, y2) {
     }
 )();
 
-
+//실시간으로 움직일수 있게끔
 function draw() {
     var stop = true;
     ctx.clearRect(0, 0, w, h);
@@ -489,10 +499,14 @@ function draw() {
         hit.disabled = true;
         player.disabled = true;
     }
-
+    //큐가 보이지 않으면 보이게함
     draw_cue();
 
     if (!cue.visible) {
         requestAnimFrame(draw);
     }
 }
+
+
+
+

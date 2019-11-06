@@ -1,17 +1,17 @@
 var sound_hit = new Audio('../sounds/hit.mp3');
 var sound_collision = new Audio('../sounds/collision.mp3');
 
-var gauge = 0;
-var one = 0.01;
+var gauge = 0; //파워게이지
+var one = 0.01; //파워에 대입하기위한 함수
 var id;
-var power = 0;
+var power = 0; //파워
 var tempX;
 var tempY;
 var TimerID;
 var i = 0;
 var isfirst = true;
-var guide_x;
-var guide_y;
+var guide_x;  //가이드라인 x축
+var guide_y; //가이드라인 y축
 
 //마우스를 현재 좌표를 받기위한 오브젝트 좌표
 function findOffset(obj) {
@@ -48,13 +48,13 @@ function updateCanvas(e) {
 
     draw_cue();
 }
-
+//큐를 누르면 드래그를 할수있음
 function startDrag() {
     if (cue.mouse == true) {
         cue.drag = true;
     }
 }
-
+//큐에서 드래그를 멈췄을대
 function stopDrag() {
     one = 0.1;
     if (cue.drag == true) {
@@ -93,19 +93,19 @@ function stopGauge() {
     cue_execute();
     waitkey = true;
     //소리 강약조절(power  = gauge 이므로 게이지 충전이 끝난 상태의 power의 값을 읽어 소리의 강약조절을 함
-    if (power < 20){
+    if (power <= 20){//파워가 20이하이면 볼륨소리 0.2
         sound_hit.volume = 0.2;
-    }else if(power < 40){
+    }else if(20 < power <= 40){ //파워가 20초과 40이하이면 볼륨소리 0.4
         sound_hit.volume = 0.4;
-    }else if(power < 60) {
+    }else if(40 <power <= 60) {//파워가 40초과 60이하이면 볼륨소리 0.6
         sound_hit.volume = 0.6;
-    }else if(power < 80) {
+    }else if(60 < power <= 80) {//파워가 60초과 80이하이면 볼륨소리 0.8
         sound_hit.volume = 0.8;
-    }else if(power < 100){
+    }else if(80 <power <= 100){//파워가 80초과 100이하이면 볼륨소리 1
         sound_hit.volume = 1;
     }
 }
-
+//큐대의 모션 공을 치기전에 뒤로가서 파워 계수대로 밀어서 치게됨
 function cue_motion() {
     i++;
     cue.x = cue.x + i * Math.cos(degreeToRadian * cue.degree);
@@ -261,6 +261,7 @@ function keyEvent1(e) {
                 p2.style.color = "dodgerblue";
                 p1.style.color = "lightgrey";
             }
+            //어떤 플레이어의 점수인지 나타냄
             p1.innerHTML = "Player1 : " + scoreinfo[0];
             p2.innerHTML = "Player2 : " + scoreinfo[1];
             playerChange();
@@ -286,13 +287,14 @@ function getscore() {
     var text;
     var turnover = false;
     if (!balls[nowPlayer].loss) //적구를 맞지 않았을때
-    {
-        if (balls[nowPlayer].red1 && balls[nowPlayer].red2&&balls[nowPlayer].count ==3) {
-            scoreinfo[nowPlayer]--; //득점
+    { //카운트가 3이상이면 3쿠션 룰에 맞음 구별하기 위해 2점씩 깍임
+        if ((balls[nowPlayer].red1 && balls[nowPlayer].red2)&&balls[nowPlayer].count >=3) {
+            scoreinfo[nowPlayer]--; //2점득점
+            scoreinfo[nowPlayer]--;
             text = "cusion";
 
-        }else if(balls[nowPlayer].red1 && balls[nowPlayer].red2&&balls[nowPlayer].count <3){
-            scoreinfo[nowPlayer]--;
+        }else if((balls[nowPlayer].red1 && balls[nowPlayer].red2)&&balls[nowPlayer].count <3){
+            scoreinfo[nowPlayer]--;//득점
             text = "Nice";
         }
 
@@ -331,7 +333,7 @@ function getscore() {
     p1 = document.getElementById("p1");
     p2 = document.getElementById("p2");
     //위 Player1,2색깔변경
-    //본인차례일때 파란색
+    //본인차례일때 파란색 본인차례가 아니면 회색
     if (nowPlayer == 0) {
         p2.style.color = "lightgrey";
         p1.style.color = "dodgerblue";
